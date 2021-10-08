@@ -1,28 +1,13 @@
-.container {
+.content-store {
   display: flex;
-  overflow: scroll;
-  width: 100%;
-  max-width: 100%;
-  padding-left: 14px;
-  border: 1px grey solid;
-  border-radius: 5px;
-  color: black
+  width: 60%;
+  margin: auto;
 }
 
-.container input {
-  width: 100%;
-  min-width: 50%;
-  border: none;
-  border-radius: 5px;
-  padding: 14px;
-  padding-left: 14px;
-}
 
 .tag {
   display: flex;
   align-items: center;
-  margin: 7px 0;
-  margin-right: 10px;
   padding: 0 10px;
   padding-right: 5px;
   border: 1px solid orange;
@@ -30,6 +15,8 @@
   background-color: orange;
   white-space: nowrap;
   color: white;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
 .tag button {
