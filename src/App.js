@@ -7,6 +7,7 @@ function App() {
   const [input, setInput] = useState('');
   const [items, setItems] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [finalResult, setFinalResult] = useState([]);
 
   const onChange = (e) => {
     const { value } = e.target;
@@ -41,29 +42,39 @@ function App() {
 
   const priceCalculator = () => {
     const result = [];
+    let totalWithoutDiscount = 0;
+    let totalWithDiscount = 0;
+
     for (let item of items) {
       const itemStore = dataItems.items.find(({ name }) => name.toLowerCase() === item.itemName);
       if (itemStore) {
+        totalWithoutDiscount += itemStore.price * item.qty;
+
         if (itemStore.sale) {
           item.total = 0;
           let qtyItem = item.qty;
+
           while (qtyItem >= itemStore.sale.qty) {
             item.total += itemStore.sale.price;
             qtyItem -= itemStore.sale.qty;
           }
           item.total = qtyItem ? item.total + (qtyItem * itemStore.price) : item.total;
+          totalWithDiscount += item.total;
           result.push(item);
         } else {
-          result.push({...item, total: (item.qty * itemStore.price)});
+          const price = item.qty * itemStore.price
+          totalWithDiscount += price;
+          result.push({...item, total: price });
         }
       }
     }
-
-    console.log(result)
+    const saved = (totalWithoutDiscount - totalWithDiscount).toFixed(2);
+    setFinalResult({items: result, total: totalWithDiscount, saved });
   }
 
   return (
     <div className="container">
+      <h1>Maxwell interview exercise</h1>
       <div className="row">
         <input
           value={input}
@@ -74,7 +85,7 @@ function App() {
         />
         {showAlert ? (<div className="alert alert-danger mt-2" role="alert">
           This item is not map in our system, please check the <strong>items.json</strong> file
-          <button type="button" class="close" onClick={() => setShowAlert(!showAlert)}>
+          <button type="button" className="close" onClick={() => setShowAlert(!showAlert)}>
               <span aria-hidden="true">&times;</span>
           </button>
         </div>) :  null}
@@ -90,7 +101,31 @@ function App() {
       {items.length ? (<div className="row">
         <button type="button" className="btn btn-dark" onClick={priceCalculator}>Total</button>
       </div>): null}
-      
+
+      {finalResult.items?.length ? (<div className="row">
+        <table className="table mt-5">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {finalResult.items.map(({ itemName, qty, total }, i) => (
+              <tr key={i}>
+                <td>{ itemName }</td>
+                <td>{ qty }</td>
+                <td>{ total }</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div>
+          <p> Total price : {`$${finalResult.total}`}</p>
+          <p> You saved : {`$${finalResult.saved} today`}</p>
+        </div>
+      </div>) :  null}
   </div>
   );
 }
